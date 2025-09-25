@@ -7,7 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080"
+      "url": "https://contacts-api-2tnt.onrender.com",
+      "description": "Render live server"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
     }
   ],
   "paths": {
@@ -25,7 +30,8 @@
                 }
               }
             }
-          }
+          },
+          "500": { "description": "Server error" }
         }
       },
       "post": {
@@ -34,7 +40,14 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/Contact" }
+              "schema": { "$ref": "#/components/schemas/Contact" },
+              "example": {
+                "firstName": "Alice",
+                "lastName": "Doe",
+                "email": "alice@example.com",
+                "favoriteColor": "Blue",
+                "birthday": "1995-06-15"
+              }
             }
           }
         },
@@ -46,21 +59,24 @@
                 "schema": { "$ref": "#/components/schemas/Contact" }
               }
             }
-          }
+          },
+          "400": { "description": "Invalid input" },
+          "500": { "description": "Server error" }
         }
       }
     },
     "/contacts/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "MongoDB ObjectId of the contact"
+        }
+      ],
       "get": {
         "summary": "Get contact by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Contact found",
@@ -70,52 +86,56 @@
               }
             }
           },
-          "404": { "description": "Not found" }
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
         }
       },
       "put": {
         "summary": "Update contact",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/Contact" }
+              "schema": { "$ref": "#/components/schemas/Contact" },
+              "example": {
+                "firstName": "Alice",
+                "lastName": "Doe",
+                "email": "alice@example.com",
+                "favoriteColor": "Green",
+                "birthday": "1995-06-15"
+              }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Contact updated",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Contact" }
-              }
-            }
-          },
-          "404": { "description": "Not found" }
+          "200": { "description": "Contact updated" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
         }
       },
       "delete": {
         "summary": "Delete contact",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
         "responses": {
           "204": { "description": "Deleted successfully" },
-          "404": { "description": "Not found" }
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/professional": {
+      "get": {
+        "summary": "Get professional/portfolio info",
+        "responses": {
+          "200": {
+            "description": "Professional info",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Professional" }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
         }
       }
     }
@@ -138,6 +158,18 @@
           "favoriteColor",
           "birthday"
         ]
+      },
+      "Professional": {
+        "type": "object",
+        "properties": {
+          "professionalName": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "primaryDescription": { "type": "string" },
+          "workDescription1": { "type": "string" },
+          "workDescription2": { "type": "string" },
+          "linkedInLink": { "type": "string" },
+          "githubLink": { "type": "string" }
+        }
       }
     }
   }
